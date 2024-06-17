@@ -1,0 +1,8 @@
+version: '3.7'
+services:
+  gce:
+    build: .
+    volumes:
+      - '.:/app/'
+    stdin_open: true
+    tty: true
