@@ -21,3 +21,8 @@ mkdir -p /usr/local/gcloud \
 
 # updating path
 echo "export PATH=$PATH:/usr/local/gcloud/google-cloud-sdk/bin" >> ~/.bashrc
+
+#Copiar esse code ao final do .bashrc
+## Setas
+#bind '"\e[A": history-search-backward'
+#bind '"\e[B": history-search-forward'
