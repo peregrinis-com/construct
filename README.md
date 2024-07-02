@@ -42,3 +42,13 @@ $ docker build -t $PATHGA/hello-repo/hello-app:v1 .
 $ docker run --rm -p 8080:8080 $PATHGA/hello-repo/hello-app:v1
 $ docker push $PATHGA/hello-repo/hello-app:v1
 ```
+
+Entrada https no DNS para redirecionamento de URL em CloudRUN
+```
+$ gcloud certificate-manager dns-authorizations create app-home --domain="home.peregrinis.com"
+$ gcloud certificate-manager dns-authorizations describe app-hope
+$ gcloud certificate-manager dns-authorizations describe app-home
+$ gcloud dns record-sets transaction start --zone="peregrinis-zone"
+$ gcloud dns record-sets transaction add  _acme-challenge.home.peregrinis.com. --name="_acme-challenge.home.peregrinis.com."    --ttl="30"    --type="CNAME"    --zone="peregrinis-zone"
+$ gcloud dns record-sets transaction execute --zone="peregrinis-zone"
+```
