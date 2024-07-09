@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+  web:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+    - "80:80"
+    volumes:
+    - .:/www
+    - ./docker-util:/docker-util
+    links:
+    - php
+  php:
+    #image: php:7.3-fpm
+    image: php:5-fpm
+    container_name: php-fpm
+    volumes:
+    - .:/www
