@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  web:
+    build: .
+    container_name: nginx
+    restart: always
+    ports:
+    - "80:80"
+    volumes:
+    - .:/www
+    links:
+    - php
+  php:
+    #image: php:7.3-fpm
+    image: php:5-fpm
+    container_name: php-fpm
+    volumes:
+    - .:/www
