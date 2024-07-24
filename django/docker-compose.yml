@@ -1,0 +1,25 @@
+version: '3.7'
+services:
+  db:
+    image: 'postgres:12-alpine'
+    volumes:
+      - '/var/lib/postgresql/data:/var/lib/postgresql/data'
+    environment:
+      - POSTGRES_NAME=suap
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  web:
+    build: .
+    volumes:
+      - '/tmp/.X11-unix/:/tmp/.X11-unix/'
+    environment:
+      - POSTGRES_NAME=suap
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - DISPLAY=$DISPLAY
+    depends_on:
+      - db      
+    ports:
+      - '8000:8000'
+    stdin_open: true
+    tty: true
