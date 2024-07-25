@@ -43,10 +43,40 @@ $ pip install -r requirements/development.txt
 
 ## Banco de dados
 
-Nesse primeiro momento só é possível trabalhar com o banco remoto. Acesse o mesmo pelo comando psql, altere a senha de todos os usuários e coloque-se como superusuário da base.
+### Remoto
+
+Acesse o banco remoto pelo comando psql, altere a senha de todos os usuários e coloque-se como superusuário da base.
 
 ```
 $ psql suap_italo -h 10.110.0.10 -U italo
 suap_italo=# update auth_user set password = 'pbkdf2_sha256$15000$mnXSqxJCvTE0$2rr5cWbdXI+BvBwnCpSbGAeS2tMd3oqkjCYmVKHRth8=';
 suap_italo=# update auth_user set is_superuser=TRUE where username='1888590';
 ```
+
+### Local
+
+Foi criado um container de postgres que monta um volume em ```/var/lib/postgresql/data```. Essa pasta contem todos os bancos que devem ser usados. Tanto nessa aplicação Django (SUAP), quanto em outras como Rails (Portal de Inscrições). Essa pasta está protegida, tendo root como o dono e o grupo.
+
+Ao instalar um novo server de postgres (postgresql-13 ou postgresql-13) na máquina local, ele iniciará uma nova pasta com o ```data``` referente. Apesar de ser possível alterar essa pasta de dados em ```/etc/.../postgresql.conf```, não faça para que em uma desinstalação os dados que estão protegidos não sejam perdidos.
+
+Acesse no container:
+
+```
+$ psql template1 -U postgres -h db
+template1=# \l
+```
+
+## Testes
+
+A solução para o problema do chromedriver nos testes está em ```suap/docker/Dockerfile```, entre as linhas 49 e 52.
+
+```
+RUN wget $(python -c "import requests;r=requests.get('https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json').json();print([chrome['url'] for chrome in r['versions'][-1]['downloads']['chrome'] if chrome['platform']=='linux64'][0])") -O chrome.zip
+RUN unzip chrome.zip && mv chrome-linux64 /opt/google-chrome && rm chrome.zip && ln -s /opt/google-chrome/chrome /usr/bin/google-chrome
+RUN wget $(python -c "import requests;r=requests.get('https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json').json();print([chrome['url'] for chrome in r['versions'][-1]['downloads']['chromedriver'] if chrome['platform']=='linux64'][0])") -O chromedriver.zip
+RUN unzip chromedriver.zip && mv chromedriver-linux64/chromedriver /usr/local/bin/ && rm -rf chromedriver-linux64 && rm chromedriver.zip
+```
+
+O procedimento pode ser feito manualmente. No arquivo json resultante do acesso a url abaixo, ache a versão mais atual e baixe o chrome e o chromedriver referente a essa versão.
+
+https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json

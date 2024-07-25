@@ -59,10 +59,17 @@ RUN echo "eval \"\$(pyenv init -)\"" >> ~/.bashrc
 ## Instale o ambiente do staging
 # $ pip install -r requirements/iff.txt
 # $ pip install -r requirements/development.txt
+
 ## Crie os seguintes arquivos e pastas
 # /home/dev/suap/deploy/logs/history/history.log'
 # /home/dev/suap/deploy/logs/email/email.log
 # /home/dev/suap/deploy/sessions
+
+## Modifique as suas informações no global
+# $ git config --global user.name "Your Name"
+# $ git config --global user.email "youremail@yourdomain.com"
+## Libere a interface gráfica do host para os testes
+# $ xhost +local:`docker inspect --format='{{ .Config.Hostname }}' ct-python3
 
 ## Problema no ldap no sync e na execução
 ## Impedir a chamada da linha abaixo; Comentar/trocar retorno.
