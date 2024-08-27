@@ -1,5 +1,7 @@
 # SUAP
 
+## Usando VM
+
 Essa é a  ajuda para construção da VM do suap. Ela deve conter no mínimo 15GB para receber toda a instalação. Ela foi criada a partir de um clone completo de da VM M1 do Virtualbox.
 
 Caso tenha que redimensionar o HD faça o seguinte:
@@ -8,8 +10,6 @@ Caso tenha que redimensionar o HD faça o seguinte:
 - Redimensione o Disco virtual;
 - Entre na máquina com um CD de boot do ubuntu ou outro linux com ```gparted``` no ```Live CD```;
 - Dê o ```resize``` na partição.
-
-## Pacotes e Pyenv
 
 Instale os pacotes
 
@@ -23,22 +23,59 @@ Depois instale o pyenv.
 $ curl https://pyenv.run | bash
 ```
 
-Coloque o código apresentado no final do arquivo ``` .bashrc```. Instale a versão 3.11.1 que é a versão do python indicada no Dockerfile atual do repositório. Crie o virtualenv para a versão instalada. Primeiramente para o ```staging```, depois para o ```update```.
+Coloque o código apresentado no final do arquivo ``` .bashrc```. Instale a versão 3.11.1 que é a versão do python indicada no Dockerfile atual do repositório. 
+
+
+## Dev Container VSCode
+
+Entre no container gerado com o Dev Conteiner do VSCode.
+
+## Configurando o Pyenv
+
+Crie o virtualenv para a versão instalada. Primeiramente para o ```staging```, depois para o ```update```.
 
 ```
 $ pyenv install 3.11.1
 $ pyenv virtualenv 3-11-1 suap-stg-3-11-1
+```
+
+No caso de container cuja imagem é a própria imagem do python, não é necessário mencionar a versão do python, ele vai pegar a do sistema.
+
+```
+$ pyenv virtualenv suap-stg
+```
+
+Para utilizar, ative o ambiente:
+
+```
 $ pyenv activate suap-stg-3-11-1
 ```
 
 ## Código do SUAP
 
-Crie uma chave ssh dupla e coloque a chave pública no seu perfil do GitLab. Execute o ```git clone``` com o endereço SSH do repositório. Na pasta ```suap```, copie o arquivo ```settings_sample.py``` para ```settings.py``` e configure conforme achar melhor. Crie uma pasta ```sessions``` na pasta ``` deploy```. Instale os requerimentos.
+Execute o ```git clone```. Na pasta ```suap```, copie o arquivo ```settings_sample.py``` para ```settings.py``` e configure conforme achar melhor. Crie uma pasta ```sessions``` na pasta ``` deploy```. Instale os requerimentos.
 
 ```
 $ pip install --upgrade pandas
 $ pip install -r requirements/iff.txt
 $ pip install -r requirements/development.txt
+```
+
+## Arquivos e pastas que não são versionados
+
+Existem pastas que são necessárias, mas não devem ser versionadas. Você deve criá-las manualmente:
+
+- /home/dev/suap/deploy/logs/history/history.log'
+- /home/dev/suap/deploy/logs/email/email.log
+- /home/dev/suap/deploy/sessions
+
+## Ambiente Git
+
+Modifique as suas informações no global.
+
+```
+$ git config --global user.name "Your Name"
+$ git config --global user.email "youremail@yourdomain.com"
 ```
 
 ## Banco de dados
@@ -68,6 +105,14 @@ template1=# \l
 
 ## Testes
 
+### Libere a interface gráfica do host para os testes
+
+```
+$ xhost +local:`docker inspect --format='{{ .Config.Hostname }}' ct-python3
+```
+
+### Chromedriver
+
 A solução para o problema do chromedriver nos testes está em ```suap/docker/Dockerfile```, entre as linhas 49 e 52.
 
 ```
@@ -80,3 +125,24 @@ RUN unzip chromedriver.zip && mv chromedriver-linux64/chromedriver /usr/local/bi
 O procedimento pode ser feito manualmente. No arquivo json resultante do acesso a url abaixo, ache a versão mais atual e baixe o chrome e o chromedriver referente a essa versão.
 
 https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json
+
+## Erros de código
+
+### Problemas LDAP
+
+Para resolver o problema no ldap no sync e na execução, impeça a chamada da linha abaixo, comentando ou trocando o retorno.
+
+- /home/dev/suap/ldap_backend/models.py, line 83
+
+Comente a linha abaixo.
+
+- /home/dev/suap/ldap_backend/router.py, line 48
+
+Apagar registros da tabela
+
+```
+# select * from ldap_backend_ldapconf;
+# delete from ldap_backend_ldapconf;
+```
+
+Depois de tudo pronto, desfaça as mudanças nos arquivos.

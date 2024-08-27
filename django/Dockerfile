@@ -48,35 +48,3 @@ RUN curl https://pyenv.run | bash
 RUN echo "export PYENV_ROOT=\"\$HOME/.pyenv\"" >> ~/.bashrc
 RUN echo "[[ -d \$PYENV_ROOT/bin ]] && export PATH=\"\$PYENV_ROOT/bin:\$PATH\"" >> ~/.bashrc
 RUN echo "eval \"\$(pyenv init -)\"" >> ~/.bashrc
-### Entre no container gerado com o Dev Conteiner do VSCode
-### Finalize as configurações do pyenv
-# $ pyenv install 3.11.1
-# $ pyenv virtualenv 3-11-1 suap-stg-3-11-1
-## Ou
-# $ pyenv virtualenv suap-stg
-
-## Baixe o repositório
-## Instale o ambiente do staging
-# $ pip install -r requirements/iff.txt
-# $ pip install -r requirements/development.txt
-
-## Crie os seguintes arquivos e pastas
-# /home/dev/suap/deploy/logs/history/history.log'
-# /home/dev/suap/deploy/logs/email/email.log
-# /home/dev/suap/deploy/sessions
-
-## Modifique as suas informações no global
-# $ git config --global user.name "Your Name"
-# $ git config --global user.email "youremail@yourdomain.com"
-## Libere a interface gráfica do host para os testes
-# $ xhost +local:`docker inspect --format='{{ .Config.Hostname }}' ct-python3
-
-## Problema no ldap no sync e na execução
-## Impedir a chamada da linha abaixo; Comentar/trocar retorno.
-# /home/dev/suap/ldap_backend/models.py, line 83
-## Comentar linha abaixo.
-# /home/dev/suap/ldap_backend/router.py, line 48
-## Apagar registros da tabela
-# select * from ldap_backend_ldapconf;
-# delete from ldap_backend_ldapconf;
-## Depois de tudo pronto, desfaça as mudanças nos arquivos.
